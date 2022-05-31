@@ -1,6 +1,6 @@
 (function (root) {
   var o = {
-        hiddenlog: "OBSERVER V2 by Reiha",
+        hiddenlog: "Observer V2 by Reiha",
         lazyimage: "lazyimage",
         lazyiframe: "lazyiframe",
         audioext: "audiowrapper",
@@ -11,7 +11,7 @@
       },
       r = function() {
         return {
-          rootMargin: "0px 0px -128px 0px"
+          rootMargin: "64px"
         }
       },
       b = function(d,o) {
@@ -29,7 +29,7 @@
           var ht = 0.5,
               hH = x.scrollHeight - x.clientHeight,
               dS = x.scrollTop;
-          ( (dS / hH ) > ht ) ? root.body.classList.add("is-show") : root.body.classList.remove("is-show")
+          ( (dS / hH ) > ht ) ? root.body.classList.add("scrolly-show") : root.body.classList.remove("scrolly-show")
         }), b(x,y)
       },
       c = function(z) {
@@ -39,9 +39,9 @@
             var observer = new IntersectionObserver(function(entries, observer) {
               entries.forEach(function(entry) {
                 if (entry.isIntersecting) {
+                  observer.unobserve(entry.target);
                   entry.target.innerHTML = entry.target.querySelector(".lazyiframe-trueVideo").innerHTML;
                   entry.target.classList.remove("lazyiframe");
-                  observer.unobserve(entry.target);
                 }
               });
             }, r() );
