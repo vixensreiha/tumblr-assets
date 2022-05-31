@@ -11,6 +11,11 @@
  *
  * Version: 2.0.0-rc.2
  *
+ * -----------------------------------------------------
+ *
+ * +rhv (reihaversion)
+ * [1.0]: Add new class and remove data-src/data-srcset when image show.
+ *
  */
 
 (function (root, factory) {
@@ -33,6 +38,7 @@
         src: "data-src",
         srcset: "data-srcset",
         selector: ".lazyload",
+        addclass: "loaded", /* +rhv[1.0]: Class name to add */
         root: null,
         rootMargin: "0px",
         threshold: 0
@@ -113,13 +119,16 @@
                         if ("img" === entry.target.tagName.toLowerCase()) {
                             if (src) {
                                 entry.target.src = src;
+                                entry.target.removeAttribute(self.settings.src) /* +rhv[1.0]: Remove data-src */
                             }
                             if (srcset) {
                                 entry.target.srcset = srcset;
+                                entry.target.removeAttribute(self.settings.srcset) /* +rhv[1.0]: Remove data-srcset */
                             }
                         } else {
                             entry.target.style.backgroundImage = "url(" + src + ")";
                         }
+                        entry.target.classList.add(self.settings.addclass) /* +rhv[1.0]: Add new class */
                     }
                 });
             }, observerConfig);
@@ -145,13 +154,16 @@
                 if ("img" === image.tagName.toLowerCase()) {
                     if (src) {
                         image.src = src;
+                        image.removeAttribute(self.settings.src) /* +rhv[1.0]: Remove data-src */
                     }
                     if (srcset) {
                         image.srcset = srcset;
+                        image.removeAttribute(self.settings.srcset) /* +rhv[1.0]: Remove data-srcset */
                     }
                 } else {
                     image.style.backgroundImage = "url('" + src + "')";
                 }
+                image.classList.add(self.settings.addclass); /* +rhv[1.0]: Add new class */
             });
         },
 
