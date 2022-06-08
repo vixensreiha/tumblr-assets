@@ -15,6 +15,7 @@
  *
  * +rhv (reihaversion)
  * [1.0]: Add new class and remove data-src/data-srcset when image show.
+ * [1.1]: Let browser load image first before showing img element.
  *
  */
 
@@ -114,21 +115,25 @@
                 Array.prototype.forEach.call(entries, function (entry) {
                     if (entry.isIntersecting) {
                         self.observer.unobserve(entry.target);
+                        let imgz = document.createElement("img"); /* +rhv[1.1]: Fake image element */
                         let src = entry.target.getAttribute(self.settings.src);
                         let srcset = entry.target.getAttribute(self.settings.srcset);
-                        if ("img" === entry.target.tagName.toLowerCase()) {
-                            if (src) {
-                                entry.target.src = src;
-                                entry.target.removeAttribute(self.settings.src) /* +rhv[1.0]: Remove data-src */
+                        imgz.src = src;
+                        imgz.addEventListener("load", function() { /* +rhv[1.1]: Load image before showing img element */
+                            if ("img" === entry.target.tagName.toLowerCase()) {
+                                if (src) {
+                                    entry.target.src = src;
+                                    entry.target.removeAttribute(self.settings.src) /* +rhv[1.0]: Remove data-src */
+                                }
+                                if (srcset) {
+                                    entry.target.srcset = srcset;
+                                    entry.target.removeAttribute(self.settings.srcset) /* +rhv[1.0]: Remove data-srcset */
+                                }
+                            } else {
+                                entry.target.style.backgroundImage = "url(" + src + ")";
                             }
-                            if (srcset) {
-                                entry.target.srcset = srcset;
-                                entry.target.removeAttribute(self.settings.srcset) /* +rhv[1.0]: Remove data-srcset */
-                            }
-                        } else {
-                            entry.target.style.backgroundImage = "url(" + src + ")";
-                        }
-                        entry.target.classList.add(self.settings.addclass) /* +rhv[1.0]: Add new class */
+                            entry.target.classList.add(self.settings.addclass) /* +rhv[1.0]: Add new class */
+                        })
                     }
                 });
             }, observerConfig);
