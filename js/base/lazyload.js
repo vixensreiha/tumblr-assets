@@ -133,7 +133,8 @@
                                 entry.target.style.backgroundImage = "url(" + src + ")";
                             }
                             entry.target.classList.add(self.settings.addclass) /* +rhv[1.0]: Add new class */
-                        })
+                        });
+                        imgz = null; /* +rhv[1.1]: This should cleanup memory GC */
                     }
                 });
             }, observerConfig);
