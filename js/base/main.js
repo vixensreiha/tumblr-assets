@@ -1,6 +1,6 @@
 (function (root) {
   var o = {
-        hiddenlog: "Observer V2 by Reiha",
+        hiddenlog: "VixensReiha",
         lazyimage: "lazyimage",
         lazyiframe: "lazyiframe",
         audioext: "audiowrapper",
