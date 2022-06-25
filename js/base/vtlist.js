@@ -1,42 +1,46 @@
-/*! Vtuber List 1.0 */
+/*! Vtuber List 2.0 */
 (function(){
-  var vtElmnt, vtArray = [],
+  var vtElmnt, vtItem = null, vtHlight = null, vtDdown = null, vtArray = [],
       vtRandm = function(o){
-          o.forEach(el => {
-            var n;
-            vtArray.push( el.dataset.group );
-            n = vtArray[Math.floor(Math.random() * vtArray.length)];
-            vtFetch(n)
-          })
+          var rd = Math.floor((Math.random() * vtItem.length));
+          var rdo = vtItem[rd].dataset.group;
+          vtFetch(rdo)
       },
       vtClick = function(o){
           o.forEach(el => {
               el.addEventListener("click", function(o) {
                   var n, e = el.dataset.group;
-                  vtFetch(e)
+                  !(el.classList.contains("active")) && vtFetch(e)
               })
           })
       },
       vtFetch = function(o){
           var n = vtElmnt.querySelector("#groupvtuber"),
-              proxyurl = "https://reihacors.herokuapp.com/",
-              url = "https://betavozko.blogspot.com/p/"+o+".html";
-          fetch(proxyurl + url).then(
+              proxyurl = "https://vtlist.vxrieha.repl.co/",
+              url = "betavozko.blogspot.com/p/"+o+".html";
+          fetch(proxyurl+url).then(
               response => response.text()
           ).then(
-              vtElmnt.classList.add("loading") ,n.innerHTML = "<p>Loading</p>"
+              vtElmnt.classList.add("is-loading"),
+              n.innerHTML = "<div class='gvtb-loader'><div class='gvtb-loader_icon'><div></div><div></div><div></div><div></div></div></div>",
+              chHligt(o)
           ).then(a => {
               const p = new DOMParser();
               const d = p.parseFromString(a, "text/html");
               const v = d.documentElement.querySelector("#getelement");
-              vtElmnt.classList.remove("loading"); chHligt(o);
+              vtElmnt.classList.remove("is-loading");
               vtElmnt.querySelector("#groupvtuber").innerHTML = v.innerHTML
           }).catch(
-              (err) => console.log("Failed to access Vtuber list data because "+err)
+              (err) => {
+                  vtElmnt.classList.remove("is-loading"),
+                  console.log("Failed to access Vtuber list data because "+err),
+                  n.innerHTML = "<div class='gvtb-error'><h3>Something wrong happen! Try again later...</h3></div>"
+                  
+              }
           )
       },
       chClass = function(o){
-          var n = o.parentElement.querySelectorAll(".rhvtlist-filter-group");
+          var n = o.parentElement.querySelectorAll(".rhvtlist-filter_item");
           n.forEach(el => {
               el.classList.contains('active') && el.classList.remove("active")
           })
@@ -44,13 +48,25 @@
       },
       chHligt = function(o){
           var n = vtElmnt.querySelector("[data-group='"+o+"']");
-          chClass(n), vtElmnt.querySelector(".rhvtlist-filter-hlight").innerHTML = n.innerHTML
+          chClass(n), vtHlight.innerHTML = n.innerHTML
+      }
+      ddOpen = function(o){
+          o.addEventListener("click", function(o) {
+              vtDdown.classList.toggle('open')
+          })
+      },
+      ddClose = function(){
+          document.addEventListener("click", function(e) {
+              if(!vtHlight.contains(e.target)) { vtDdown.classList.remove('open') }
+          });
       };
 
     window.addEventListener('DOMContentLoaded', (event) => {
-        var n;
         vtElmnt = document.querySelector(".rhvtlist"), null != vtElmnt && (
-            n = vtElmnt.querySelectorAll(".rhvtlist-filter-group"), vtRandm(n), vtClick(n)
+            vtItem = vtItem || vtElmnt.querySelectorAll(".rhvtlist-filter_item"),
+            vtHlight = vtHlight || vtElmnt.querySelector(".rhvtlist-filter_hlight"),
+            vtDdown = vtDdown || vtElmnt.querySelector(".rhvtlist-filter_items"),
+            vtRandm(), vtClick(vtItem), ddOpen(vtHlight), ddClose()
         )
     });
   
